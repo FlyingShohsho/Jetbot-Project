@@ -80,7 +80,7 @@ def rotate_robot_fast():
 def stop_robot():
     robot.stop()
 
-
+##Define widgets
 image_widget = widgets.Image(format='jpeg', width=300, height=300)
 speed_widget = widgets.FloatSlider(value=0.4, min=0.0, max=1.0, description='speed')
 turn_gain_widget = widgets.FloatSlider(value=0.5, min=0.0, max=2.0, description='turn gain')
@@ -92,6 +92,8 @@ display(widgets.VBox([
 ]))
 width = int(image_widget.width)
 height = int(image_widget.height)      
+
+##Define real-time execute function. This is the FSM and the control system
 def execute(change):
     global color_lower, color_upper, color_index, approaching_target, searching_target, cycle_done
     
@@ -155,9 +157,12 @@ def execute(change):
     # Update image display to widget
     image_widget.value = bgr8_to_jpeg(frame)  
 execute({'new': camera.value})
-#if (searching_target):
- #   stop_robot()
-  #  time.sleep(5)
-   # rotate_robot()
-    #time.sleep(5)
-    
+
+##Activate the continuous real-time execute function
+camera.unobserve_all()
+camera.observe(execute, names='value')
+
+##This should only be executed to manually interrupt the robot in the middle, and thus commented out
+#camera.unobserve_all()
+#time.sleep(1.0)
+#robot.stop()
